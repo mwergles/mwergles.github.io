@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zoom Status</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#0e1629; --muted:#8ea0c6; --text:#e6eeff; --ok:#2ecc71; --warn:#f39c12; --down:#e74c3c; --chip:#1a2542;
+      --accent:#3b82f6;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:linear-gradient(180deg,#0a1020,#0b1220); color:var(--text)}
+    header{position:sticky; top:0; backdrop-filter:saturate(140%) blur(8px); background:rgba(11,18,32,.7); border-bottom:1px solid rgba(255,255,255,.06);}
+    .container{max-width:1000px; margin:0 auto; padding:16px}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.3px}
+    .logo{width:28px; height:28px; border-radius:6px; background:linear-gradient(135deg,#2b6ef6,#66ccff); box-shadow:0 6px 18px rgba(59,130,246,.35)}
+    .brand small{color:var(--muted); font-weight:600}
+    .status-banner{display:flex; align-items:center; gap:12px; padding:14px 16px; border:1px solid rgba(255,255,255,.06); background:linear-gradient(180deg,#151e39,#0f1730); border-radius:14px}
+    .dot{width:10px; height:10px; border-radius:50%}
+    .dot.down{background:var(--down); box-shadow:0 0 0 6px rgba(231,76,60,.1)}
+    .dot.warn{background:var(--warn)}
+    .pulse{position:relative}
+    .pulse::after{content:""; position:absolute; inset:-6px; border-radius:50%; border:2px solid rgba(231,76,60,.35); animation:pulse 1.2s ease-out infinite}
+    @keyframes pulse{to{transform:scale(1.6); opacity:0}}
+    .subtitle{color:var(--muted); font-size:.95rem}
+    .grid{display:grid; gap:16px}
+    @media(min-width:880px){.grid{grid-template-columns:2.2fr 1fr}}
+    .card{background:linear-gradient(180deg,#111a33,#0e1629); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:16px}
+    h2{margin:0 0 10px; font-size:1.1rem}
+    .components{display:grid; grid-template-columns:1.2fr .8fr .6fr; gap:8px; align-items:center}
+    .components .row{display:contents}
+    .chip{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; background:var(--chip); color:#cfe0ff; font-size:.85rem}
+    .state{justify-self:end; font-weight:700}
+    .state.ok{color:var(--ok)}
+    .state.degraded{color:var(--warn)}
+    .state.down{color:var(--down)}
+    .kpis{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+    .kpi{padding:14px; border-radius:12px; background:linear-gradient(180deg,#0f1730,#0b1220); border:1px solid rgba(255,255,255,.06)}
+    .kpi .label{color:var(--muted); font-size:.85rem}
+    .kpi .value{font-weight:800; font-size:1.4rem}
+    .incident{display:flex; flex-direction:column; gap:8px; padding:12px; border:1px dashed rgba(231,76,60,.35); border-radius:12px; background:rgba(231,76,60,.06)}
+    .timeline{display:grid; gap:10px}
+    .time{color:#ffb3aa; font-weight:700}
+    .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 12px; border-radius:10px; color:#0a1220; background:#ffb4ae; font-weight:700; border:none; cursor:pointer}
+    .foot{margin-top:24px; color:var(--muted); font-size:.8rem}
+    .note{font-size:.75rem; color:#94a3b8; opacity:.9}
+    .uptime{display:grid; gap:8px}
+    .bars{display:flex; gap:6px}
+    .bar{flex:1; height:10px; background:#19305f; border-radius:3px; overflow:hidden}
+    .bar > span{display:block; height:100%}
+    .bar.ok > span{width:98%; background:var(--ok)}
+    .bar.down > span{width:36%; background:var(--down)}
+    .tag{font-size:.72rem; background:#13234a; padding:4px 8px; border-radius:999px; color:#cdd9ff}
+    .hdr{display:flex; align-items:center; justify-content:space-between; gap:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container hdr">
+      <div class="brand"><div class="logo"></div> Zoom <small>Status</small></div>
+      <div class="tag" id="now">—</div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-block:20px">
+    <div class="status-banner">
+      <div class="dot down pulse"></div>
+      <div>
+        <div style="font-weight:800; font-size:1.05rem">Grande Interrupção Global</div>
+        <div class="subtitle">Estamos investigando uma falha que afeta reuniões, webinars e telefonia. Várias regiões reportam indisponibilidade total.</div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:18px">
+      <section class="card">
+        <h2>Componentes</h2>
+        <div class="components" role="table" aria-label="componentes">
+          <div class="row" role="row">
+            <div class="chip" role="cell">Reuniões (Zoom Meetings)</div>
+            <div class="subtitle" role="cell">Conexão / Ingresso</div>
+            <div class="state down" role="cell">DOWN</div>
+          </div>
+          <div class="row" role="row">
+            <div class="chip" role="cell">Webinars</div>
+            <div class="subtitle" role="cell">Streaming / Q&A</div>
+            <div class="state down" role="cell">DOWN</div>
+          </div>
+          <div class="row" role="row">
+            <div class="chip" role="cell">Telefone (Zoom Phone)</div>
+            <div class="subtitle" role="cell">Chamadas / PSTN</div>
+            <div class="state degraded" role="cell">GRANDE DEGRADAÇÃO</div>
+          </div>
+          <div class="row" role="row">
+            <div class="chip" role="cell">Chat & Presença</div>
+            <div class="subtitle" role="cell">Mensagens / Status</div>
+            <div class="state degraded" role="cell">DEGRADADO</div>
+          </div>
+          <div class="row" role="row">
+            <div class="chip" role="cell">Dashboard & Admin</div>
+            <div class="subtitle" role="cell">Login / Portal</div>
+            <div class="state degraded" role="cell">DEGRADADO</div>
+          </div>
+        </div>
+        <div class="foot note" style="margin-top:12px">Atualizado automaticamente a cada poucos minutos.</div>
+      </section>
+
+      <aside class="card">
+        <h2>KPIs</h2>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">Taxa de erro</div>
+            <div class="value">87.4%</div>
+            <div class="note">p95 – Ingresso em reunião</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Latência</div>
+            <div class="value">9.4 s</div>
+            <div class="note">média de handshake</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Disponibilidade</div>
+            <div class="value" style="color:var(--down)">99.95% → 42%</div>
+            <div class="note">últimas 2h</div>
+          </div>
+        </div>
+
+        <div class="uptime" style="margin-top:16px">
+          <div class="label">Últimas 24h</div>
+          <div class="bars">
+            <div class="bar ok"><span></span></div>
+            <div class="bar ok"><span></span></div>
+            <div class="bar down"><span></span></div>
+            <div class="bar down"><span></span></div>
+            <div class="bar ok"><span></span></div>
+            <div class="bar ok"><span></span></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:16px">
+      <div class="hdr">
+        <h2>Incidente Ativo</h2>
+        <span class="tag">ID #Z-2025-10-08-A</span>
+      </div>
+      <div class="timeline" style="margin-top:10px">
+        <div class="incident">
+          <div class="time" id="t0">08:12 BRT</div>
+          <div><b>Investigando:</b> Picos de erro 5xx nos serviços de reunião. Equipes de engenharia acionadas.</div>
+        </div>
+        <div class="incident">
+          <div class="time">08:26 BRT</div>
+          <div><b>Identificado:</b> Falha em provedor de identidade/região primária. Ações de mitigação em andamento.</div>
+        </div>
+        <div class="incident">
+          <div class="time">08:41 BRT</div>
+          <div><b>Atualização:</b> Tráfego sendo roteado para regiões alternativas. Alguns usuários podem voltar ao normal intermitentemente.</div>
+        </div>
+      </div>
+      <!--<div class="note" style="margin-top:12px">Este é um painel de paródia para fins de demonstração interna.</div>-->
+    </section>
+  </main>
+
+  <script>
+    // Marca horário atual
+    const now = new Date();
+    const fmt = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'medium', timeStyle: 'short' });
+    document.getElementById('now').textContent = 'Atualizado: ' + fmt.format(now) + ' (BRT)';
+    // Ajusta primeiro item da timeline para o mesmo dia/hora atual, mas com um pequeno deslocamento
+    const pad = n=>String(n).padStart(2,'0');
+    const h = pad(now.getHours());
+    const m = pad(Math.max(0, now.getMinutes()-3));
+    document.getElementById('t0').textContent = `${h}:${m} BRT`;
+  </script>
+</body>
+</html>
